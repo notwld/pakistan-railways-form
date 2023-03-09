@@ -1,5 +1,6 @@
 <?php
-    if(isset($_POST['submit'])){
+    $success = false;
+    if (isset($_POST['f_name']) && $success == false) {
         $server = "localhost";
         $username = "root";
         $password = "";
@@ -21,16 +22,13 @@
         $passenger_details  = $_POST['passenger-details'];
         $payment_method = $_POST['payment'];
         $seat_preference = $_POST['seat-preference'];
-        echo $f_name, $l_name, $email, $phone, $cnic, $arrival, $departure, $p_count, $date, $ticket_type, $passenger_details, $payment_method, $seat_preference;
+
+
         $sql = "INSERT INTO `railways`.`ticket` (`first_name`, `last_name`, `email`, `phone`, `cnic`, `departure`,`arrival`, `num_passengers`, `date`, `ticket_type`, `passenger_detail`,`seat_prefrence`, `payment_option`) VALUES ('$f_name', '$l_name', '$email', '$phone', '$cnic',  '$departure','$arrival', '$p_count', '$date', '$ticket_type', '$passenger_details', '$seat_preference', '$payment_method');";
 
         if ($conn->query($sql) == true) {
-        
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        
-        }
+            $success = true;
+        } 
         $conn->close();
     }
 ?>
@@ -47,7 +45,7 @@
     <title>Pakistan Railways</title>
 </head>
 <body class="bg-gray-700">
-    <nav class="bg-gray-800">
+    <nav class="bg-gray-800 backdrop-blur">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
     <div class="relative flex h-16 items-center justify-between">
       <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -142,7 +140,18 @@
         Book your tickets online and get the best deals on your travel.
     </span>
     </div>
-    <form class="bg-white p-6 rounded-lg shadow-md" action="index.php" method="POST">
+    <?php
+    // flash message
+    if ($success) {
+        echo '<div class=" my-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <strong class="font-bold">Success!</strong>
+        <span class="block sm:inline">Your ticket has been booked successfully.</span>
+        </div>';
+        // $success = false;
+    }   
+  
+        ?>
+    <form class="bg-white p-6 rounded-lg shadow-md  drop-shadow" action="index.php" method="POST">
         <div class="grid grid-cols-6 gap-6">
             <div class="col-span-6 sm:col-span-3 mb-4">
                 <label class="block text-gray-700 font-bold mb-2" for="name">First Name</label>
@@ -193,7 +202,7 @@
             <label class="block text-gray-700 font-bold mb-2" for="passenger-details">Passenger Details <span class="text-sm font-medium">
                 (Optional)
             </span></label>
-            <textarea class="border rounded-md px-4 py-2 w-full" id="passenger-details" name="passenger-details" required></textarea>
+            <textarea class="border rounded-md px-4 py-2 w-full" id="passenger-details" name="passenger-details"></textarea>
           </div>
           <div class="col-span-6 sm:col-span-3 mb-4">
             <label class="block text-gray-700 font-bold mb-2" for="seat-preference">Seat Preference</label>
@@ -222,4 +231,11 @@
     </form>
 </div>
 </body>
+<script>
+  document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      form.reset();
+    }
+  })
+</script>
 </html>
